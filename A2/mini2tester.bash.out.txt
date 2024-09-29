@@ -1,0 +1,196 @@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  coderback.bash Tests  @@@@@@@@@@@@@@@@@@@@@@@@
+
+********************************************************************************
+[[[ Usage tests - all must fail ]]]
+[Ex1] --> Test Case 01 <--
+./coderback.bash
+Error: Expected two input parameters.
+Usage: ./coderback.bash <backupdirectory> <fileordirtobackup>
+Return code from the program is 1
+
+[Ex1] --> Test Case 02 <--
+./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir
+Error: Expected two input parameters.
+Usage: ./coderback.bash <backupdirectory> <fileordirtobackup>
+Return code from the program is 1
+
+[Ex1] --> Test Case 03 <--
+./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir nosuchdir
+Error: The directory/file 'nosuchdir' does not exist.
+Return code from the program is 2
+
+[Ex1] --> Test Case 04 <--
+./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdirnot /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir
+Error: The directory '/tmp/__tmp_comp206_jdsilv2_21473/cb/bakdirnot' does not exist.
+Return code from the program is 2
+
+[Ex1] --> Test Case 05 <--
+Present working directory is /tmp/__tmp_comp206_jdsilv2_21473
+./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir2 cb/srcdir2/
+Error: Both source and destination are the same.
+Return code from the program is 2
+
+[Ex1] --> Test Case 06 <--
+./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir2/ /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir2
+Error: Both source and destination are the same.
+Return code from the program is 2
+
+********************************************************************************
+[[[ Valid Scenario ]]]
+[Ex1] --> Test Case 07 <--
+Backup dir contents
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/
+total 12
+-rw------- 1 jdsilv2 nogroup  9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup 11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 22 Feb  2  2022 srcdir.20220202.tar
+Source dir contents
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir
+total 12
+drwx------ 2 jdsilv2 nogroup 4096 Jan 28 12:29 data
+-rw------- 1 jdsilv2 nogroup   15 Jan 28 12:29 hello.py
+-rw------- 1 jdsilv2 nogroup   14 Jan 28 12:29 msg1.txt
+./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir
+Return code from the program is 0
+Backup dir contents
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/
+total 24
+-rw------- 1 jdsilv2 nogroup     9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup    11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 28 12:29 srcdir.20220128.tar
+-rw------- 1 jdsilv2 nogroup    22 Feb  2  2022 srcdir.20220202.tar
+Contents of /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/srcdir.20220128.tar
+drwx------ jdsilv2/nogroup   0 2022-01-28 12:29 /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir/
+-rw------- jdsilv2/nogroup  14 2022-01-28 12:29 /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir/msg1.txt
+-rw------- jdsilv2/nogroup  15 2022-01-28 12:29 /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir/hello.py
+drwx------ jdsilv2/nogroup   0 2022-01-28 12:29 /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir/data/
+-rw------- jdsilv2/nogroup  14 2022-01-28 12:29 /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir/data/contents.txt
+
+[[[ Valid Scenario  - do not overwrite ]]]
+[Ex1] --> Test Case 08 <--
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/
+total 24
+-rw------- 1 jdsilv2 nogroup     9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup    11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 21 00:00 srcdir.20220128.tar
+-rw------- 1 jdsilv2 nogroup    22 Feb  2  2022 srcdir.20220202.tar
+echo n | ./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir
+Backup file 'srcdir.20220128.tar' already exists in '/tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir'. Overwrite? (y/n)
+Return code from the program is 3
+Backup dir contents - timestamp of the archive file /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/srcdir.20220128.tar should not have changed
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/
+total 24
+-rw------- 1 jdsilv2 nogroup     9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup    11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 21 00:00 srcdir.20220128.tar
+-rw------- 1 jdsilv2 nogroup    22 Feb  2  2022 srcdir.20220202.tar
+
+[[[ Valid Scenario  - overwrite ]]]
+[Ex1] --> Test Case 09 <--
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/
+total 24
+-rw------- 1 jdsilv2 nogroup     9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup    11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 21 00:00 srcdir.20220128.tar
+-rw------- 1 jdsilv2 nogroup    22 Feb  2  2022 srcdir.20220202.tar
+echo y | ./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir /tmp/__tmp_comp206_jdsilv2_21473/cb/srcdir
+Backup file 'srcdir.20220128.tar' already exists in '/tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir'. Overwrite? (y/n)
+Return code from the program is 0
+Backup dir contents - timestamp of the archive file /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/srcdir.20220128.tar should have changed
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/
+total 24
+-rw------- 1 jdsilv2 nogroup     9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup    11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 28 12:29 srcdir.20220128.tar
+-rw------- 1 jdsilv2 nogroup    22 Feb  2  2022 srcdir.20220202.tar
+
+[[[ Valid Scenario  - archive a file ]]]
+[Ex1] --> Test Case 10 <--
+ls -l /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/
+total 24
+-rw------- 1 jdsilv2 nogroup     9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup    11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 28 12:29 srcdir.20220128.tar
+-rw------- 1 jdsilv2 nogroup    22 Feb  2  2022 srcdir.20220202.tar
+./coderback.bash /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir cb/srcdir3/data
+ls -l cb/bakdir/
+total 36
+-rw------- 1 jdsilv2 nogroup     9 Feb  3  2022 anothersrcdir.20220203.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 28 12:29 data.20220128.tar
+-rw------- 1 jdsilv2 nogroup    11 Jan 20 00:00 srcdir.20220120.tar
+-rw------- 1 jdsilv2 nogroup 10240 Jan 28 12:29 srcdir.20220128.tar
+-rw------- 1 jdsilv2 nogroup    22 Feb  2  2022 srcdir.20220202.tar
+Contents of /tmp/__tmp_comp206_jdsilv2_21473/cb/bakdir/data.20220128.tar
+-rw------- jdsilv2/nogroup  10 2022-01-28 12:29 cb/srcdir3/data
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  deltad.bash Tests  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+********************************************************************************
+[[[ Usage tests - all must fail ]]]
+[Ex2] --> Test Case 11 <--
+./deltad.bash
+Error: Expected two input parameters.
+Usage: ./deltad.bash <originaldirectory> <comparisondirectory>
+Return code from the program is 1
+
+[Ex2] --> Test Case 12 <--
+./deltad.bash /tmp/__tmp_comp206_jdsilv2_21473/dd/src1
+Error: Expected two input parameters.
+Usage: ./deltad.bash <originaldirectory> <comparisondirectory>
+Return code from the program is 1
+
+[[[ Directory not exists - all must fail ]]]
+[Ex2] --> Test Case 13 <--
+./deltad.bash dd/src1 dd/srcn
+Error: Input parameter #2 'dd/srcn' is not a directory.
+Usage: ./deltad.bash <originaldirectory> <comparisondirectory>
+Return code from the program is 2
+
+[Ex2] --> Test Case 14 <--
+./deltad.bash /tmp/__tmp_comp206_jdsilv2_21473/dd/srcn dd/src2
+Error: Input parameter #1 '/tmp/__tmp_comp206_jdsilv2_21473/dd/srcn' is not a directory.
+Usage: ./deltad.bash <originaldirectory> <comparisondirectory>
+Return code from the program is 2
+
+[[[ Both directories are the same - must fail ]]]
+[Ex2] --> Test Case 15 <--
+./deltad.bash dd/src1 /tmp/__tmp_comp206_jdsilv2_21473/dd/src1
+Error: the original and comparison directories refer to the same directory.
+Usage: ./deltad.bash <originaldirectory> <comparisondirectory>
+Return code from the program is 2
+
+[[[ argument(s) not directory - must fail ]]]
+[Ex2] --> Test Case 16 <--
+./deltad.bash dd/src1 /bin/ls
+Error: Input parameter #2 '/bin/ls' is not a directory.
+Usage: ./deltad.bash <originaldirectory> <comparisondirectory>
+Return code from the program is 2
+
+[Ex2] --> Test Case 17 <--
+./deltad.bash /bin/ls /tmp/__tmp_comp206_jdsilv2_21473/dd/src1
+Error: Input parameter #1 '/bin/ls' is not a directory.
+Usage: ./deltad.bash <originaldirectory> <comparisondirectory>
+Return code from the program is 2
+
+[[[ both directories empty - must work - no output should be displayed ]]]
+[Ex2] --> Test Case 18 <--
+./deltad.bash dd/src1 /tmp/__tmp_comp206_jdsilv2_21473/dd/src2
+Return code from the program is 0
+
+[[[ directories have contents - must work - output should be displayed ]]]
+[Ex2] --> Test Case 19 <--
+./deltad.bash /tmp/__tmp_comp206_jdsilv2_21473/dd/src1 dd/src2
+/tmp/__tmp_comp206_jdsilv2_21473/dd/src1/file2.txt differs.
+dd/src2/file3.txt is missing
+/tmp/__tmp_comp206_jdsilv2_21473/dd/src1/file4.txt is missing
+/tmp/__tmp_comp206_jdsilv2_21473/dd/src1/file5.txt is missing
+Return code from the program is 3
+
+[[[ directories have subdirectories - must not include them in the output ]]]
+[Ex2] --> Test Case 20 <--
+./deltad.bash dd/src1 dd/src2
+dd/src1/file2.txt differs.
+dd/src2/file3.txt is missing
+dd/src1/file4.txt is missing
+dd/src1/file5.txt is missing
+Return code from the program is 3
+
